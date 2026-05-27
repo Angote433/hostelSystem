@@ -1,0 +1,40 @@
+package com.ejaisoft.service;
+
+import com.ejaisoft.dao.HostelDao;
+import com.ejaisoft.dao.RoomDao;
+import com.ejaisoft.model.Hostel;
+import com.ejaisoft.model.Room;
+
+import java.util.List;
+
+public class RoomService {
+    RoomDao rd = new RoomDao();
+    HostelDao hd = new HostelDao();
+
+    public Room addRoom(Room room,int hosId){
+        //Pick a hostel first.
+        Hostel hostel = hd.getHostelByID(hosId);
+        if(hostel == null){
+            System.out.println("Hostel not found");
+            return null;
+        }
+        //room already exists?
+        if(rd.checkIfRoomExists(room.getRoomNumber(), hostel.getHostelId())){
+            return null;
+        }
+        room.setHostelId(hostel);
+        rd.addRoom(room);
+
+        return room;
+    }
+
+    public List<Room>listRooms(){return rd.viewAllRooms();}
+    public List<Room>listRoomsInAHostel(int hostelId){
+        return rd.getHostelRooms(hostelId);
+    }
+    public Room getRoomById(int roomId){
+        return rd.getRoomById(roomId);
+    }
+
+
+}
