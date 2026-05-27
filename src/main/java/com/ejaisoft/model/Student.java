@@ -22,6 +22,17 @@ public class Student {
         this.gender = gender;
     }
 
+    public Student(int studentId, String regNumber, String fullName, String userName, String email, String phoneNumber, Gender gender) {
+        this.studentId=studentId;
+        this.regNumber=regNumber;
+        this.fullName=fullName;
+        this.userName=userName;
+        this.email=email;
+        this.phoneNumber=phoneNumber;
+        this.gender=gender;
+
+    }
+
     public int getStudentId() {
         return studentId;
     }

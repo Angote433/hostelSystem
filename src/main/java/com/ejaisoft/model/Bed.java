@@ -3,16 +3,19 @@ package com.ejaisoft.model;
 public class Bed {
     private  int bedId;
     private Student studentId;
-    private Room roomId;
+    private Room room;
     private String bedNumber;
     private BedStatus status;
 
-    public Bed(int bedId, Student studentId, Room roomId, String bedNumber, BedStatus status) {
+    public Bed(int bedId, Student studentId, Room room, String bedNumber, BedStatus status) {
         this.bedId = bedId;
         this.studentId = studentId;
-        this.roomId = roomId;
+        this.room = room;
         this.bedNumber = bedNumber;
         this.status = status;
+    }
+    public Bed(String bedNumber){
+        this.bedNumber = bedNumber;
     }
 
     public int getBedId() {
@@ -31,12 +34,12 @@ public class Bed {
         this.studentId = studentId;
     }
 
-    public Room getRoomId() {
-        return roomId;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomId(Room roomId) {
-        this.roomId = roomId;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public String getBedNumber() {

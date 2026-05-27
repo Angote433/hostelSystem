@@ -76,8 +76,9 @@ public class HostelDao {
     }
 
     public Hostel getHostelByID(int hosId){
-        String sql = "select * from hostel where hostel_id = "+ hosId;
+        String sql = "select * from hostel where hostel_id = ?";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1,hosId);
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
                 int hostelId= rs.getInt(1);
@@ -99,5 +100,21 @@ public class HostelDao {
     }
 
 
+    public Hostel getHostelByName(String hostelName) {
+        String sql = "select * from hostel where hostel_name = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1,hostelName);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                int hostelId= rs.getInt(1);
+                String _hostelName = rs.getString(2);
+                Gender genderType = Gender.valueOf(rs.getString(3).toUpperCase());
+                return new Hostel(hostelId,_hostelName,genderType);
+            }
 
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
