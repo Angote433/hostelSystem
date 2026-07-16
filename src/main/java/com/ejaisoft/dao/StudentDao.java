@@ -9,10 +9,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class StudentDao {
+    private String url = "jdbc:mysql://localhost:3306/hostel_system";
+    private String username = "root";
+    private String pass = "A#1rnold233";
 
     /*
     -List students
@@ -25,7 +27,7 @@ public class StudentDao {
         String sql = "insert into student(reg_number,full_name,user_name,password_hash,email,phone_number,gender)"
                 + "values(?,?,?,?,?,?,?)";
 
-        try (Connection conn = SystemSettings.getConnection();
+        try (Connection conn = SystemSettings.dbConnection(url, username, pass);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, student.getRegNumber());
             pstmt.setString(2, student.getFullName());
@@ -48,7 +50,7 @@ public class StudentDao {
         String sql = "update student set reg_number = ?,full_name = ?,user_name=?,password_hash=?" +
                 ",email=?,phone_number=?,gender=? where student_id = ?";
 
-        try (Connection conn = SystemSettings.getConnection();
+        try (Connection conn = SystemSettings.dbConnection(url, username, pass);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, student.getRegNumber());
@@ -76,58 +78,37 @@ public class StudentDao {
     public List<Student> getAllStudents() {
         String sql = "select * from student";
         List<Student> students = new ArrayList<>();
-        try (Connection conn = SystemSettings.getConnection();
+        try (Connection conn = SystemSettings.dbConnection(url, username, pass);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                students.add(mapRow(rs));
+                int studentId = rs.getInt(1);
+                String regNo = rs.getString(2);
+                String fullName = rs.getString(3);
+                String userName = rs.getString(4);
+                String passwordHash = rs.getString(5);
+                String email = rs.getString(6);
+                String phoneNumber = rs.getString(7);
+                String gender = rs.getString(8);
+
+                Gender studentGender = Gender.valueOf(gender + "ALE");
+
+                students.add(new Student(studentId, regNo, fullName, userName, email, phoneNumber, studentGender));
+
             }
 
             return students;
         } catch (SQLException e) {
             System.err.println("Failed to get students");
             e.printStackTrace();
-            return Collections.emptyList();
+            return null;
         }
-    }
-
-    public Student getStudentById(int studentId) {
-        String sql = "select * from student where student_id = ?";
-        try (Connection conn = SystemSettings.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, studentId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return mapRow(rs);
-            }
-        } catch (SQLException e) {
-            System.err.println("Failed to get the student");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Student findByUsernameOrEmail(String identifier) {
-        String sql = "select * from student where user_name = ? or email = ?";
-        try (Connection conn = SystemSettings.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, identifier);
-            pstmt.setString(2, identifier);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return mapRow(rs);
-            }
-        } catch (SQLException e) {
-            System.err.println("Failed to look up the student");
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public boolean existsByAdmissionNumber(String admNo) {
         String sql = "select * from student where reg_number = ?";
-        try (Connection conn = SystemSettings.getConnection();
+        try (Connection conn = SystemSettings.dbConnection(url, username, pass);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, admNo);
             ResultSet rs = pstmt.executeQuery();
@@ -145,7 +126,7 @@ public class StudentDao {
 
     public boolean existsByEmail(String email) {
         String sql = "select * from student where email = ?";
-        try (Connection conn = SystemSettings.getConnection();
+        try (Connection conn = SystemSettings.dbConnection(url, username, pass);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
@@ -162,7 +143,7 @@ public class StudentDao {
 
     public boolean existsByUserName(String userName) {
         String sql = "select * from student where user_name = ?";
-        try (Connection conn = SystemSettings.getConnection();
+        try (Connection conn = SystemSettings.dbConnection(url, username, pass);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userName);
             ResultSet rs = pstmt.executeQuery();
@@ -175,20 +156,5 @@ public class StudentDao {
         }
 
         return false;
-    }
-
-    private Student mapRow(ResultSet rs) throws SQLException {
-        int studentId = rs.getInt(1);
-        String regNo = rs.getString(2);
-        String fullName = rs.getString(3);
-        String userName = rs.getString(4);
-        String passwordHash = rs.getString(5);
-        String email = rs.getString(6);
-        String phoneNumber = rs.getString(7);
-        Gender gender = "F".equalsIgnoreCase(rs.getString(8)) ? Gender.FEMALE : Gender.MALE;
-
-        Student student = new Student(studentId, regNo, fullName, userName, email, phoneNumber, gender);
-        student.setPasswordHash(passwordHash);
-        return student;
     }
 }

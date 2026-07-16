@@ -1,15 +1,16 @@
 package com.ejaisoft.menu;
 
-import com.ejaisoft.Utils.Validator;
 import com.ejaisoft.model.Gender;
 import com.ejaisoft.model.Student;
 import com.ejaisoft.service.StudentService;
 
-public class MainMenu {
-    private static StudentService service = new StudentService();
-    private static LoginMenu loginMenu = new LoginMenu();
+import java.util.Scanner;
 
-    public void runHostel() {
+public class MainMenu {
+    private static Scanner userInput = new Scanner(System.in);
+    private static StudentService service= new StudentService();
+    private static LoginMenu loginMenu = new LoginMenu();
+    static void main() {
         boolean state = true;
 
         while (state) {
@@ -17,7 +18,8 @@ public class MainMenu {
             System.out.println("1.Create Account (For students)");
             System.out.println("2.Login(Student/Admin)");
             System.out.println("3.Exit");
-            int userChoice = Validator.readInt("Enter your choice: ");
+            System.out.print("Enter your choice: ");
+            int userChoice = userInput.nextInt();
 
             switch (userChoice) {
                 case 1:
@@ -39,58 +41,43 @@ public class MainMenu {
         }
     }
 
-    private static void createAccountMenu() {
+    private static void createAccountMenu(){
         System.out.println("====================================");
         System.out.println("   CREATE STUDENT ACCOUNT");
         System.out.println("====================================");
-        String studentName = Validator.readNonBlank("Enter your full name: ");
-        String regNumber = Validator.readNonBlank("Registration Number: ");
-        String userName = Validator.readNonBlank("Username: ");
-
-        String email;
-        while (true) {
-            email = Validator.readNonBlank("Email: ");
-            if (Validator.isValidEmail(email)) {
-                break;
-            }
-            System.out.println("Please enter a valid email address.");
-        }
-
-        String mobileNumber = Validator.readNonBlank("Mobile number: ");
-
-        Gender gender;
-        while (true) {
-            String genderInput = Validator.readNonBlank("Gender(Male/Female): ");
-            try {
-                gender = Gender.valueOf(genderInput.trim().toUpperCase());
-                break;
-            } catch (IllegalArgumentException e) {
-                System.out.println("Please enter Male or Female.");
-            }
-        }
+        userInput.nextLine();
+        System.out.print("Enter your full name: ");
+        String studentName = userInput.nextLine();
+        System.out.print("Registration Number: ");
+        String regNumber = userInput.nextLine();
+        System.out.print("Username: ");
+        String userName = userInput.nextLine();
+        System.out.print("Email: ");
+        String email = userInput.nextLine();
+        System.out.print("Mobile number: ");
+        String mobileNumber = userInput.nextLine();
+        System.out.print("Gender(Male/Female): ");
+        String gender = userInput.nextLine();
 
         boolean passStatus = true;
 
-        while (passStatus) {
+        while(passStatus) {
             System.out.println("Set up your password");
             System.out.print("Enter the password you will use: ");
-            String firstAttempt = Validator.SCANNER.nextLine();
+            String firstAttempt = userInput.nextLine();
             System.out.print("Confirm your password: ");
-            String secondPassAttempt = Validator.SCANNER.nextLine();
+            String secondPassAttempt = userInput.nextLine();
 
-            if (firstAttempt.equals(secondPassAttempt)) {
-                Student student = new Student(regNumber, studentName, userName, firstAttempt, email, mobileNumber, gender);
-                try {
-                    service.onboardStudent(student);
-                    System.out.println("Account created successfully Proceed to login");
-                } catch (RuntimeException e) {
-                    System.out.println("Could not create account: " + e.getMessage());
-                }
+            if(firstAttempt.equals(secondPassAttempt)){
+                Student student = new Student(regNumber,studentName,userName,firstAttempt,email,mobileNumber, Gender.valueOf(gender.toUpperCase()));
+                service.onboardStudent(student);
+                System.out.println("Account created successfully Proceed to login");
                 passStatus = false;
-            } else {
+            }else{
                 System.out.println("Password mismatch!! ");
             }
         }
+
 
 
     }
