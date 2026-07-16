@@ -1,8 +1,10 @@
 package com.ejaisoft.service;
 
 import com.ejaisoft.dao.HostelDao;
+import com.ejaisoft.model.Gender;
 import com.ejaisoft.model.Hostel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HostelService {
@@ -20,5 +22,14 @@ public class HostelService {
 
     public List<Hostel> viewALlHostels(){return hd.getHostels();}
 
+    public List<Hostel> listHostelsForGender(Gender gender) {
+        List<Hostel> filtered = new ArrayList<>();
+        for (Hostel hostel : hd.getHostels()) {
+            if (hostel.getGenderType() == gender) {
+                filtered.add(hostel);
+            }
+        }
+        return filtered;
+    }
 
 }

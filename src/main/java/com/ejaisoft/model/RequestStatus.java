@@ -1,5 +1,5 @@
 package com.ejaisoft.model;
 
 public enum RequestStatus {
-    PENDING,APPROVED,REJECTED
+    PENDING, APPROVED, REJECTED, COMPLETED
 }
