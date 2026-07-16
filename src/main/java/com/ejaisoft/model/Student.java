@@ -33,6 +33,10 @@ public class Student {
 
     }
 
+    public Student() {
+
+    }
+
     public int getStudentId() {
         return studentId;
     }

@@ -1,0 +1,3 @@
+db.url=jdbc:mysql://localhost:3306/hostel_system
+db.username=root
+db.password=your_password_here
